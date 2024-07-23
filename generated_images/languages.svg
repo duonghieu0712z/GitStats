@@ -154,7 +154,7 @@
 
           <div>
             <span class="progress">
-              <span style="background-color: #e34c26;width: 40.81605%;" class="progress-item"></span><span style="background-color: #f1e05a;width: 20.16042%;" class="progress-item"></span><span style="background-color: #00ADD8;width: 11.09257%;" class="progress-item"></span><span style="background-color: #3178c6;width: 7.42654%;" class="progress-item"></span><span style="background-color: #c6538c;width: 5.83405%;" class="progress-item"></span><span style="background-color: #563d7c;width: 4.96149%;" class="progress-item"></span><span style="background-color: #178600;width: 4.76713%;" class="progress-item"></span><span style="background-color: #000080;width: 3.67990%;" class="progress-item"></span><span style="background-color: #b07219;width: 1.16946%;" class="progress-item"></span><span style="background-color: #384d54;width: 0.05086%;" class="progress-item"></span><span style="background-color: #012456;width: 0.02887%;" class="progress-item"></span><span style="background-color: #427819;width: 0.00776%;" class="progress-item"></span><span style="background-color: #89e051;width: 0.00490%;" class="progress-item"></span>
+              <span style="background-color: #e34c26;width: 40.81287%;" class="progress-item"></span><span style="background-color: #f1e05a;width: 20.15885%;" class="progress-item"></span><span style="background-color: #00ADD8;width: 11.09170%;" class="progress-item"></span><span style="background-color: #3178c6;width: 7.43377%;" class="progress-item"></span><span style="background-color: #c6538c;width: 5.83359%;" class="progress-item"></span><span style="background-color: #563d7c;width: 4.96110%;" class="progress-item"></span><span style="background-color: #178600;width: 4.76676%;" class="progress-item"></span><span style="background-color: #000080;width: 3.67962%;" class="progress-item"></span><span style="background-color: #b07219;width: 1.16937%;" class="progress-item"></span><span style="background-color: #384d54;width: 0.05086%;" class="progress-item"></span><span style="background-color: #012456;width: 0.02887%;" class="progress-item"></span><span style="background-color: #427819;width: 0.00776%;" class="progress-item"></span><span style="background-color: #89e051;width: 0.00490%;" class="progress-item"></span>
             </span>
           </div>
 
@@ -176,7 +176,7 @@
                         HTML
                     </span>
                     <span class="percent">
-                        40.82%
+                        40.81%
                     </span>
             </li>
             <li style="animation-delay: 150ms;">
