@@ -154,7 +154,7 @@
 
           <div>
             <span class="progress">
-              <span style="background-color: #e34c26;width: 40.74404%;" class="progress-item"></span><span style="background-color: #f1e05a;width: 20.12486%;" class="progress-item"></span><span style="background-color: #00ADD8;width: 11.07300%;" class="progress-item"></span><span style="background-color: #3178c6;width: 7.58986%;" class="progress-item"></span><span style="background-color: #c6538c;width: 5.82376%;" class="progress-item"></span><span style="background-color: #563d7c;width: 4.95273%;" class="progress-item"></span><span style="background-color: #178600;width: 4.75872%;" class="progress-item"></span><span style="background-color: #000080;width: 3.67341%;" class="progress-item"></span><span style="background-color: #b07219;width: 1.16740%;" class="progress-item"></span><span style="background-color: #384d54;width: 0.05077%;" class="progress-item"></span><span style="background-color: #012456;width: 0.02882%;" class="progress-item"></span><span style="background-color: #427819;width: 0.00775%;" class="progress-item"></span><span style="background-color: #89e051;width: 0.00489%;" class="progress-item"></span>
+              <span style="background-color: #e34c26;width: 40.74404%;" class="progress-item"></span><span style="background-color: #f1e05a;width: 20.12486%;" class="progress-item"></span><span style="background-color: #00ADD8;width: 11.07300%;" class="progress-item"></span><span style="background-color: #3178c6;width: 7.58986%;" class="progress-item"></span><span style="background-color: #c6538c;width: 5.82376%;" class="progress-item"></span><span style="background-color: #663399;width: 4.95273%;" class="progress-item"></span><span style="background-color: #178600;width: 4.75872%;" class="progress-item"></span><span style="background-color: #000080;width: 3.67341%;" class="progress-item"></span><span style="background-color: #b07219;width: 1.16740%;" class="progress-item"></span><span style="background-color: #384d54;width: 0.05077%;" class="progress-item"></span><span style="background-color: #012456;width: 0.02882%;" class="progress-item"></span><span style="background-color: #427819;width: 0.00775%;" class="progress-item"></span><span style="background-color: #89e051;width: 0.00489%;" class="progress-item"></span>
             </span>
           </div>
 
@@ -258,7 +258,7 @@
             <li style="animation-delay: 750ms;">
                     <svg xmlns="http://www.w3.org/2000/svg" 
                          class="octicon" 
-                         style="fill:#563d7c;"
+                         style="fill:#663399;"
                          viewBox="0 0 16 16" 
                          version="1.1" 
                          width="16" 
