@@ -150,19 +150,24 @@ class GitHubRepoStats(object):
                     owned_cursor=next_owned, contrib_cursor=next_contrib
                 )
             )
-            raw_results = raw_results if raw_results is not None else {}
+            raw_results = raw_results if raw_results else {}
 
             if not self._name:
-                self._name = (
-                    raw_results.get("data", {}).get("viewer", {}).get("name", None)
-                )
+                data = raw_results.get("data", {})
+                if data is None:
+                    continue
+
+                viewer = data.get("viewer", {})
+                if viewer is None:
+                    continue
+
+                self._name = viewer.get("name", None)
                 if self._name is None:
                     self._name = (
                         raw_results.get("data", {})
                         .get("viewer", {})
                         .get("login", self._NO_NAME)
                     )
-            print("name", self._name)
 
             owned_repos: dict[str, dict | list[dict]] = (
                 raw_results.get("data", {}).get("viewer", {}).get("repositories", {})
