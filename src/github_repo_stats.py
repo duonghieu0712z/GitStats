@@ -152,32 +152,36 @@ class GitHubRepoStats(object):
             )
             raw_results = raw_results if raw_results else {}
 
-            if not self._name:
-                data = raw_results.get("data", {})
-                if data is None:
-                    continue
-
-                viewer = data.get("viewer", {})
-                if viewer is None:
-                    continue
-
-                self._name = viewer.get("name", None)
-                if self._name is None:
+            if (
+                raw_results.get("data", {}) is not None
+                and raw_results.get("data", {}).get("viewer", {}) is not None
+            ):
+                if not self._name:
                     self._name = (
-                        raw_results.get("data", {})
-                        .get("viewer", {})
-                        .get("login", self._NO_NAME)
+                        raw_results.get("data", {}).get("viewer", {}).get("name", None)
                     )
+                    if self._name is None:
+                        self._name = (
+                            raw_results.get("data", {})
+                            .get("viewer", {})
+                            .get("login", self._NO_NAME)
+                        )
 
-            owned_repos: dict[str, dict | list[dict]] = (
-                raw_results.get("data", {}).get("viewer", {}).get("repositories", {})
-            )
-            repos: list[dict] = owned_repos.get("nodes", [])
-            contrib_repos: dict[str, dict | list] = (
-                raw_results.get("data", {})
-                .get("viewer", {})
-                .get("repositoriesContributedTo", {})
-            )
+                owned_repos: dict[str, dict | list[dict]] = (
+                    raw_results.get("data", {})
+                    .get("viewer", {})
+                    .get("repositories", {})
+                )
+                repos: list[dict] = owned_repos.get("nodes", [])
+                contrib_repos: dict[str, dict | list] = (
+                    raw_results.get("data", {})
+                    .get("viewer", {})
+                    .get("repositoriesContributedTo", {})
+                )
+            else:
+                owned_repos = {}
+                repos = []
+                contrib_repos = {}
 
             if not self.environment_vars.is_exclude_contrib_repos:
                 repos += contrib_repos.get("nodes", [])
