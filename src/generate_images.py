@@ -192,7 +192,7 @@ class GenerateImages:
             else add_unit(num_repos)
         )
         repos_str: str = (
-            f"{repos:,} [{'%g' % round(num_collab_repos / num_repos * 100, 2)}%]"
+            f"{repos:,} [{'%g' % round(num_collab_repos / num_repos * 100, 2) if num_collab_repos > 0 and num_repos > 0 else 0}%]"
         )
         output = sub(pattern="{{ repos_str }}", repl=repos_str, string=output)
 

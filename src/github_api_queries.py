@@ -137,12 +137,12 @@ class GitHubApiQueries(object):
         :return: GraphQL query with user login and name
         """
         return """
-            {{
-                viewer {{
+            {
+                viewer {
                     login
                     name
-                }}
-            }}"""
+                }
+            }"""
 
     @staticmethod
     def repos_overview(
