@@ -101,15 +101,23 @@ Generate regularly updated visualizations of user and repository statistics from
 <summary>Click drop-down to view optional repository Secrets for customizing GitHub statistic visualizations
 </summary>
 
-* ### Optional Secret *Name*: `EXCLUDED`
-  For excluding repositories from being included entirely in the generated statistic visualizations.
+* ### Optional Secret *Name*: `EXCLUDED_REPOS`
+  For excluding repositories from the generated statistic visualizations.
   
   **Instructions**:
   * enter *Value* in the following format (separated by commas):
     * `[owner/repo],[owner/repo],...,[owner/repo]`
   * example:
     * `jstrieb/github-stats,rahul-jha98/github-stats-transparent,idiotWu/stats`
-* ### Optional Secret *Name*: `ONLY_INCLUDED`
+* ### Optional Secret *Name*: `EXCLUDED_OWNERS`
+  For excluding repositories associated with (user/organisation) owners from the generated statistic visualizations.
+  
+  **Instructions**:
+  * enter *Value* in the following format (separated by commas):
+    * `[owner],[owner],...,[owner]`
+  * example:
+    * `R055A,University-Project-Repos`
+* ### Optional Secret *Name*: `ONLY_INCLUDED_REPOS`
   For **ONLY** including repositories in the generated statistic visualizations
     - such as when there are fewer repositories to include than to exclude
   
@@ -118,6 +126,15 @@ Generate regularly updated visualizations of user and repository statistics from
       * `[owner/repo],[owner/repo],...,[owner/repo]`
     * example:
       * `R055A/GitStats,R055A/R055A`
+* ### Optional Secret *Name*: `ONLY_INCLUDED_OWNERS`
+  For **ONLY** including repositories associated with (user/organisation) owners in the generated statistic visualizations
+    - such as when there are fewer owners to include than to exclude
+  
+    **Instructions**:
+    * enter *Value* in the following format (separated by commas):
+      * `[owner],[owner],...,[owner]`
+    * example:
+      * `R055A,University-Project-Repos`
 * ### Optional Secret *Name*: `EXCLUDED_LANGS`
   For excluding undesired languages from being included in the generated statistic visualizations
   
@@ -208,6 +225,15 @@ Generate regularly updated visualizations of user and repository statistics from
       * `[owner/repo],[owner/repo],...,[owner/repo]`
     * example:
       * `R055A/UniversityProject-A,R055A/UniversityProject-B`
+* ### Optional Secret *Name*: `ONLY_INCLUDED_COLLAB_REPO_OWNERS`
+  For **ONLY** including collaborative repositories associated with owner(s) in the generated average contribution statistics calculations
+    - such as when there are fewer collaborative repository owners to include than to exclude
+  
+    **Instructions**:
+    * enter *Value* in the following format (separated by commas):
+      * `[owner],[owner],...,[owner]`
+    * example:
+      * `R055A,University-Project-Repos`
 * ### Optional Secret *Name*: `EXCLUDED_COLLAB_REPOS`
   For excluding collaborative repositories from being included in the average contribution statistics calculations
     - for example, such as for when 
@@ -221,6 +247,14 @@ Generate regularly updated visualizations of user and repository statistics from
     * `[owner/repo],[owner/repo],...,[owner/repo]`
   * example:
     * `tera_open_source/bit_typo_fix,peer_repo/missing_or_no_git_co_author_credit,dude_collab/email_not_reg_on_github,dog_ate/my_repo,mars/attacks`
+* ### Optional Secret *Name*: `EXCLUDED_COLLAB_REPO_OWNERS`
+  For excluding collaborative repositories associated with owner(s) from being included in the average contribution statistics calculations
+
+  **Instructions**:
+  * enter *Value* in the following format (separated by commas):
+    * `[owner],[owner],...,[owner]`
+  * example:
+    * `R055A,University-Project-Repos`
 * ### Optional Secret *Name*: `MORE_COLLAB_REPOS`
     For including collaborative repositories that are otherwise not included in the average contribution statistics calculations
     - for example, such as when
@@ -232,6 +266,14 @@ Generate regularly updated visualizations of user and repository statistics from
     * `[owner/repo],[owner/repo],...,[owner/repo]`
   * example:
     * `imported_ghosted/large_A+_collab_project,slave_trade/larger_A++_project`
+* ### Optional Secret *Name*: `MORE_COLLAB_REPO_OWNERS`
+    For including collaborative repositories associated with owner(s) that are otherwise not included in the average contribution statistics calculations
+
+  **Instructions**:
+  * enter *Value* in the following format (separated by commas):
+    * `[owner],[owner],...,[owner]`
+  * example:
+    * `R055A,University-Project-Repos`
 * ### Optional Secret *Name*: `IS_STORE_REPO_VIEWS`
   Boolean for storing generated repository view statistic visualization data beyond the 14 day-limit GitHub API allows 
     - `true` by default

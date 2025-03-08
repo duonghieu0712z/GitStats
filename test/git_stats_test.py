@@ -16,7 +16,10 @@ ACCESS_TOKEN: str = getenv("ACCESS_TOKEN")  # or manually enter ACCESS_TOKEN str
 GITHUB_ACTOR: str = getenv("GITHUB_ACTOR")  # or manually enter '<GitHub Username>'
 
 # OPTIONAL
-EXCLUDED_REPOS: str = getenv("EXCLUDED")  # or enter: '[owner/repo],...,[owner/repo]'
+EXCLUDED_REPOS: str = getenv(
+    "EXCLUDED_REPOS"
+)  # or enter: '[owner/repo],...,[owner/repo]'
+EXCLUDED_OWNERS: str = getenv("EXCLUDED_OWNERS")  # or enter: '[owner],...,[owner]'
 EXCLUDED_LANGS: str = getenv("EXCLUDED_LANGS")  # or enter: '[lang],...,[lang]'
 EXCLUDED_REPO_LANGS: str = getenv(
     "EXCLUDED_REPO_LANGS"
@@ -32,14 +35,27 @@ FIRST_VIEWED: str = getenv("FIRST_VIEWED")  # or enter: 'YYYY-MM-DD'
 IS_MAINTAIN_REPO_VIEWS: str = getenv("IS_STORE_REPO_VIEWS")  # or enter: '<bool>'
 MORE_COLLABS: str = getenv("MORE_COLLABS")  # or enter: '<int>'
 MORE_REPOS: str = getenv("MORE_REPOS")  # or enter: '[owner/repo],...,[owner/repo]'
-ONLY_INCLUDED: str = getenv("ONLY_INCLUDED")  # or enter: '[owner/repo],...'
+ONLY_INCLUDED_REPOS: str = getenv(
+    "ONLY_INCLUDED_REPOS"
+)  # or enter: '[owner/repo],...,[owner/repo]'
+ONLY_INCLUDED_OWNERS: str = (
+    "University-Project-Repos"  # getenv("ONLY_INCLUDED_OWNERS") # or enter: [owner],...,[owner]
+)
 ONLY_INCLUDED_COLLAB_REPOS: str = getenv(
     "ONLY_INCLUDED_COLLAB_REPOS"
-)  # or enter: '[owner/repo],...'
+)  # or enter: [owner/repo],...,[owner/repo]
+ONLY_INCLUDED_COLLAB_REPO_OWNERS: str = getenv(
+    "ONLY_INCLUDED_COLLAB_REPO_OWNERS"
+)  # or enter: [owner],...,[owner]
 EXCLUDED_COLLAB_REPOS: str = getenv(
     "EXCLUDED_COLLAB_REPOS"
-)  # or enter: '[owner/repo],...'
-MORE_COLLAB_REPOS: str = getenv("MORE_COLLAB_REPOS")  # or enter: '[owner/repo],...'
+)  # or enter: [owner/repo],...,[owner/repo]
+EXCLUDED_COLLAB_REPO_OWNERS: str = getenv(
+    "EXCLUDED_COLLAB_REPO_OWNERS"
+)  # or enter: [owner],...,[owner]
+MORE_COLLAB_REPOS: str = getenv(
+    "MORE_COLLAB_REPOS"
+)  # or enter: [owner/repo],...,[owner/repo]
 
 
 async def main() -> None:
@@ -57,6 +73,7 @@ async def main() -> None:
                 username=GITHUB_ACTOR,
                 access_token=ACCESS_TOKEN,
                 exclude_repos=EXCLUDED_REPOS,
+                exclude_owners=EXCLUDED_OWNERS,
                 exclude_langs=EXCLUDED_LANGS,
                 exclude_repo_langs=EXCLUDED_REPO_LANGS,
                 is_include_forked_repos=IS_INCLUDE_FORKED_REPOS,
@@ -70,9 +87,12 @@ async def main() -> None:
                 is_store_repo_view_count=IS_MAINTAIN_REPO_VIEWS,
                 more_collaborators=MORE_COLLABS,
                 manually_added_repos=MORE_REPOS,
-                only_included_repos=ONLY_INCLUDED,
+                only_included_repos=ONLY_INCLUDED_REPOS,
+                only_included_owners=ONLY_INCLUDED_OWNERS,
                 only_included_collab_repos=ONLY_INCLUDED_COLLAB_REPOS,
+                only_included_collab_repo_owners=ONLY_INCLUDED_COLLAB_REPO_OWNERS,
                 exclude_collab_repos=EXCLUDED_COLLAB_REPOS,
+                exclude_collab_repo_owners=EXCLUDED_COLLAB_REPO_OWNERS,
                 more_collab_repos=MORE_COLLAB_REPOS,
             ),
             session=session,

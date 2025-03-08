@@ -132,6 +132,19 @@ class GitHubApiQueries(object):
         return dict()
 
     @staticmethod
+    def get_user() -> str:
+        """
+        :return: GraphQL query with user login and name
+        """
+        return """
+            {{
+                viewer {{
+                    login
+                    name
+                }}
+            }}"""
+
+    @staticmethod
     def repos_overview(
         contrib_cursor: Optional[str] = None, owned_cursor: Optional[str] = None
     ) -> str:
@@ -142,7 +155,6 @@ class GitHubApiQueries(object):
             {{
                 viewer {{
                     login,
-                    name,
                     repositories(
                     first: 100,
                     orderBy: {{

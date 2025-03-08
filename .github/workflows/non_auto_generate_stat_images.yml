@@ -60,7 +60,8 @@ jobs:
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        EXCLUDED: ${{ secrets.EXCLUDED }}
+        EXCLUDED_REPOS: ${{ secrets.EXCLUDED_REPOS }}
+        EXCLUDED_OWNERS: ${{ secrets.EXCLUDED_OWNERS }}
         EXCLUDED_LANGS: ${{ secrets.EXCLUDED_LANGS }}
         EXCLUDED_REPO_LANGS: ${{ secrets.EXCLUDED_REPO_LANGS }}
         IS_INCLUDE_FORKED_REPOS: ${{ secrets.IS_INCLUDE_FORKED_REPOS }}
@@ -74,10 +75,14 @@ jobs:
         IS_STORE_REPO_VIEWS: ${{ secrets.IS_STORE_REPO_VIEWS }}
         MORE_COLLABS: ${{ secrets.MORE_COLLABS }}
         MORE_REPOS: ${{ secrets.MORE_REPOS }}
-        ONLY_INCLUDED: ${{ secrets.ONLY_INCLUDED }}
+        ONLY_INCLUDED_REPOS: ${{ secrets.ONLY_INCLUDED_REPOS }}
+        ONLY_INCLUDED_OWNERS: ${{ secrets.ONLY_INCLUDED_OWNERS }}
         ONLY_INCLUDED_COLLAB_REPOS: ${{ secrets.ONLY_INCLUDED_COLLAB_REPOS }}
+        ONLY_INCLUDED_COLLAB_REPO_OWNERS: ${{ secrets.ONLY_INCLUDED_COLLAB_REPO_OWNERS }}
         EXCLUDED_COLLAB_REPOS: ${{ secrets.EXCLUDED_COLLAB_REPOS }}
+        EXCLUDED_COLLAB_REPO_OWNERS: ${{ secrets.EXCLUDED_COLLAB_REPO_OWNERS }}
         MORE_COLLAB_REPOS: ${{ secrets.MORE_COLLAB_REPOS }}
+        MORE_COLLAB_REPO_OWNERS: ${{ secrets.MORE_COLLAB_REPO_OWNERS }}
 
     # Commits all changed files to the repository
     - name: Commit to the repo

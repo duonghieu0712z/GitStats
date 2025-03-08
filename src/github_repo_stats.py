@@ -21,7 +21,7 @@ class GitHubRepoStats(object):
     _EXCLUDED_USER_NAMES: list[str] = [
         "dependabot[bot]"
     ]  # exclude bot data from being included in statistical calculations
-    _NO_NAME: str = "No Name"
+    _NO_NAME: str = "Unknown"
 
     def __init__(
         self, environment_vars: EnvironmentVariables, session: ClientSession
@@ -100,10 +100,18 @@ class GitHubRepoStats(object):
         :return: True if repo is not to be included in self._repos
         """
         return (
-            repo_name in self._repos
-            or len(self.environment_vars.only_included_repos) > 0
-            and repo_name not in self.environment_vars.only_included_repos
+            # repo_name in self._repos
+            (
+                len(self.environment_vars.only_included_owners) > 0
+                and repo_name.split("/")[0]
+                not in self.environment_vars.only_included_owners
+            )
+            or (
+                len(self.environment_vars.only_included_repos) > 0
+                and repo_name not in self.environment_vars.only_included_repos
+            )
             or repo_name in self.environment_vars.exclude_repos
+            or repo_name.split("/")[0] in self.environment_vars.exclude_owners
         )
 
     async def is_repo_type_excluded(
@@ -144,37 +152,51 @@ class GitHubRepoStats(object):
         next_owned: str | None = None
         next_contrib: str | None = None
 
+        user_raw_result: dict[str, dict] = await self.queries.query(
+            generated_query=GitHubApiQueries.get_user()
+        )
+        user_raw_result = user_raw_result if user_raw_result else {}
+        if (
+            user_raw_result.get("data", {}) is not None
+            and user_raw_result.get("data", {}).get("viewer", {}) is not None
+            and (
+                user_raw_result.get("data", {}).get("viewer", {}).get("name", None)
+                is not None
+                or user_raw_result.get("data", {}).get("viewer", {}).get("user", None)
+                is not None
+            )
+        ):
+            self._name = (
+                user_raw_result.get("data", {})
+                .get("viewer", {})
+                .get("name", self._NO_NAME)
+            )
+        elif user_raw_result.get("message", "").lower() == "bad credentials":
+            raise ConnectionRefusedError("Unauthorized Error: Invalid Access Token")
+
         while True:
-            raw_results: dict[str, dict] = await self.queries.query(
+            repo_overview_raw_results: dict[str, dict] = await self.queries.query(
                 generated_query=GitHubApiQueries.repos_overview(
                     owned_cursor=next_owned, contrib_cursor=next_contrib
                 )
             )
-            raw_results = raw_results if raw_results else {}
+            repo_overview_raw_results = (
+                repo_overview_raw_results if repo_overview_raw_results else {}
+            )
 
             if (
-                raw_results.get("data", {}) is not None
-                and raw_results.get("data", {}).get("viewer", {}) is not None
+                repo_overview_raw_results.get("data", {}) is not None
+                and repo_overview_raw_results.get("data", {}).get("viewer", {})
+                is not None
             ):
-                if not self._name:
-                    self._name = (
-                        raw_results.get("data", {}).get("viewer", {}).get("name", None)
-                    )
-                    if self._name is None:
-                        self._name = (
-                            raw_results.get("data", {})
-                            .get("viewer", {})
-                            .get("login", self._NO_NAME)
-                        )
-
                 owned_repos: dict[str, dict | list[dict]] = (
-                    raw_results.get("data", {})
+                    repo_overview_raw_results.get("data", {})
                     .get("viewer", {})
                     .get("repositories", {})
                 )
                 repos: list[dict] = owned_repos.get("nodes", [])
                 contrib_repos: dict[str, dict | list] = (
-                    raw_results.get("data", {})
+                    repo_overview_raw_results.get("data", {})
                     .get("viewer", {})
                     .get("repositoriesContributedTo", {})
                 )
@@ -245,7 +267,7 @@ class GitHubRepoStats(object):
                 continue
 
             repo_name: str = repo.get("nameWithOwner")
-            if await self.is_repo_name_invalid(repo_name):
+            if await self.is_repo_name_invalid(repo_name=repo_name):
                 continue
             self._repos.add(repo_name)
 
@@ -486,8 +508,14 @@ class GitHubRepoStats(object):
             return self._users_lines_changed
         _, collab_repos = await self.raw_collaborators()
         slave_status_repos: set[str] = self.environment_vars.more_collab_repos
+        slave_status_repo_owners: set[str] = (
+            self.environment_vars.more_collab_repo_owners
+        )
         exclusive_collab_repos: set[str] = (
             self.environment_vars.only_included_collab_repos
+        )
+        exclusive_collab_repo_owners: set[str] = (
+            self.environment_vars.only_included_collab_repo_owners
         )
 
         contributor_set: set[str] = set()
@@ -547,10 +575,14 @@ class GitHubRepoStats(object):
             # calculate average author's contributions to each repository with at least one other collaborator
             if (
                 repo not in self.environment_vars.exclude_collab_repos
+                and repo.split("/")[0]
+                not in self.environment_vars.exclude_collab_repo_owners
                 and (
-                    not exclusive_collab_repos
+                    not (exclusive_collab_repos or exclusive_collab_repo_owners)
                     or repo in exclusive_collab_repos
+                    or repo.split("/")[0] in exclusive_collab_repo_owners
                     or repo in slave_status_repos
+                    or repo.split("/")[0] in slave_status_repo_owners
                 )
                 and (author_additions + author_deletions) > 0
                 and (
@@ -559,6 +591,7 @@ class GitHubRepoStats(object):
                     in collab_repos.union(
                         slave_status_repos
                     )  # either collaborators are ghosting or no show in repo
+                    or repo.split("/")[0] in slave_status_repo_owners
                 )
             ):
                 repo_total_changes: int = (

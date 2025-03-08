@@ -18,7 +18,8 @@ class EnvironmentVariables:
         self,
         username: str,
         access_token: str,
-        exclude_repos: Optional[str] = getenv("EXCLUDED"),
+        exclude_repos: Optional[str] = getenv("EXCLUDED_REPOS"),
+        exclude_owners: Optional[str] = getenv("EXCLUDED_OWNERS"),
         exclude_langs: Optional[str] = getenv("EXCLUDED_LANGS"),
         exclude_repo_langs: Optional[str] = getenv("EXCLUDED_REPO_LANGS"),
         is_include_forked_repos: str = getenv("IS_INCLUDE_FORKED_REPOS"),
@@ -32,12 +33,20 @@ class EnvironmentVariables:
         is_store_repo_view_count: str = getenv("IS_STORE_REPO_VIEWS"),
         more_collaborators: Optional[str] = getenv("MORE_COLLABS"),
         manually_added_repos: Optional[str] = getenv("MORE_REPOS"),
-        only_included_repos: Optional[str] = getenv("ONLY_INCLUDED"),
+        only_included_repos: Optional[str] = getenv("ONLY_INCLUDED_REPOS"),
+        only_included_owners: Optional[str] = getenv("ONLY_INCLUDED_OWNERS"),
         only_included_collab_repos: Optional[str] = getenv(
             "ONLY_INCLUDED_COLLAB_REPOS"
         ),
+        only_included_collab_repo_owners: Optional[str] = getenv(
+            "ONLY_INCLUDED_COLLAB_REPO_OWNERS"
+        ),
         exclude_collab_repos: Optional[str] = getenv("EXCLUDED_COLLAB_REPOS"),
+        exclude_collab_repo_owners: Optional[str] = getenv(
+            "EXCLUDED_COLLAB_REPO_OWNERS"
+        ),
         more_collab_repos: Optional[str] = getenv("MORE_COLLAB_REPOS"),
+        more_collab_repo_owners: Optional[str] = getenv("MORE_COLLAB_REPO_OWNERS"),
     ) -> None:
         self.__db: GitRepoStatsDB = GitRepoStatsDB()
 
@@ -48,6 +57,11 @@ class EnvironmentVariables:
             self.exclude_repos: set[str] = set()
         else:
             self.exclude_repos = {x.strip() for x in exclude_repos.split(",")}
+
+        if exclude_owners is None:
+            self.exclude_owners: set[str] = set()
+        else:
+            self.exclude_owners = {x.strip() for x in exclude_owners.split(",")}
 
         if exclude_langs is None:
             self.exclude_langs: set[str] = set()
@@ -154,11 +168,28 @@ class EnvironmentVariables:
                 x.strip() for x in only_included_repos.split(",")
             }
 
+        if only_included_owners is None or only_included_owners == "":
+            self.only_included_owners: set[str] = set()
+        else:
+            self.only_included_owners = {
+                x.strip() for x in only_included_owners.split(",")
+            }
+
         if only_included_collab_repos is None or only_included_collab_repos == "":
             self.only_included_collab_repos: set[str] = set()
         else:
             self.only_included_collab_repos = {
                 x.strip() for x in only_included_collab_repos.split(",")
+            }
+
+        if (
+            only_included_collab_repo_owners is None
+            or only_included_collab_repo_owners == ""
+        ):
+            self.only_included_collab_repo_owners: set[str] = set()
+        else:
+            self.only_included_collab_repo_owners = {
+                x.strip() for x in only_included_collab_repo_owners.split(",")
             }
 
         if exclude_collab_repos is None:
@@ -168,10 +199,24 @@ class EnvironmentVariables:
                 x.strip() for x in exclude_collab_repos.split(",")
             }
 
+        if exclude_collab_repo_owners is None:
+            self.exclude_collab_repo_owners: set[str] = set()
+        else:
+            self.exclude_collab_repo_owners = {
+                x.strip() for x in exclude_collab_repo_owners.split(",")
+            }
+
         if more_collab_repos is None:
             self.more_collab_repos: set[str] = set()
         else:
             self.more_collab_repos = {x.strip() for x in more_collab_repos.split(",")}
+
+        if more_collab_repo_owners is None:
+            self.more_collab_repo_owners: set[str] = set()
+        else:
+            self.more_collab_repo_owners = {
+                x.strip() for x in more_collab_repo_owners.split(",")
+            }
 
         self.pull_requests_count: int = self.__db.pull_requests
         self.issues_count: int = self.__db.issues
