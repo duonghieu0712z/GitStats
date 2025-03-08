@@ -4,7 +4,7 @@ Generate regularly updated visualizations of user and repository statistics from
 
 > A modification of [`jstrieb/github-stats`](https://github.com/jstrieb/github-stats) visualizations with new and improved statistics and more options!
 
-[![GitStats Overview](https://raw.githubusercontent.com/R055A/GitStats/actions_branch/generated_images/overview.svg)![GitStats Languages](https://raw.githubusercontent.com/R055A/GitStats/actions_branch/generated_images/languages.svg)](https://github.com/R055A/GitStats)
+[![GitStats Overview](../actions_branch/generated_images/overview.svg)![GitStats Languages](../actions_branch/generated_images/languages.svg)](https://github.com/R055A/GitStats)
 
 > _Note: my '**Avg contributions**' stats is customized to only consider collaborative [university project repos](https://github.com/University-Project-Repos)_
 
