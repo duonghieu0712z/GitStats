@@ -1,12 +1,14 @@
 # 📈 [GitHub Stats Visualization](https://github.com/R055A/GitStats) 🔭
 
+[![Generate Git Stats Images](https://github.com/R055A/GitStats/actions/workflows/non_auto_generate_stat_images.yml/badge.svg)](https://github.com/R055A/GitStats/actions/workflows/non_auto_generate_stat_images.yml) [![Auto Update Stats Images](https://github.com/R055A/GitStats/actions/workflows/auto_update_stat_images.yml/badge.svg)](https://github.com/R055A/GitStats/actions/workflows/auto_update_stat_images.yml)
+
 Generate regularly updated visualizations of personalized GitHub statistics. Filter by owner/organisation, repository, type, language, and more. Secure and private [GraphQL](https://docs.github.com/en/graphql) and [REST](https://docs.github.com/en/rest) API-fetching using [Actions](https://docs.github.com/en/actions) and [Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets). Create a template [(top-right green button)](https://github.com/new?template_name=GitStats&template_owner=R055A) and follow instructions below for authorizing API-fetched user statistics.
 
 > A modification of [`jstrieb/github-stats`](https://github.com/jstrieb/github-stats) visualizations
 
-[![GitStats Overview](../actions_branch/generated_images/overview.svg)![GitStats Languages](../actions_branch/generated_images/languages.svg)](https://github.com/R055A/GitStats)
+[![GitStats Overview](https://raw.githubusercontent.com/R055A/GitStats/refs/heads/actions_branch/generated_images/overview.svg)![GitStats Languages](https://raw.githubusercontent.com/R055A/GitStats/refs/heads/actions_branch/generated_images/languages.svg)](https://github.com/R055A/GitStats)
 
-> _Note: my '**Avg contributions**' stats is customized to only consider collaborative [university project repos](https://github.com/University-Project-Repos)_
+> _My **Avg contributions** mostly include [uni projects](https://github.com/University-Project-Repos), and exclude non-collab, minor roles (open-source, lead), etc_  
 
 ## Description of Statistical Terminology
 
