@@ -100,7 +100,6 @@ class GitHubRepoStats(object):
         :return: True if repo is not to be included in self._repos
         """
         return (
-            # repo_name in self._repos
             (
                 len(self.environment_vars.only_included_owners) > 0
                 and repo_name.split("/")[0]
@@ -109,6 +108,8 @@ class GitHubRepoStats(object):
             or (
                 len(self.environment_vars.only_included_repos) > 0
                 and repo_name not in self.environment_vars.only_included_repos
+                and repo_name.split("/")[0]
+                not in self.environment_vars.only_included_owners
             )
             or repo_name in self.environment_vars.exclude_repos
             or repo_name.split("/")[0] in self.environment_vars.exclude_owners
@@ -173,6 +174,8 @@ class GitHubRepoStats(object):
             )
         elif user_raw_result.get("message", "").lower() == "bad credentials":
             raise ConnectionRefusedError("Unauthorized Error: Invalid Access Token")
+        else:
+            raise Exception(f"Error: {user_raw_result.get('message', '')}")
 
         while True:
             repo_overview_raw_results: dict[str, dict] = await self.queries.query(

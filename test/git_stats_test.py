@@ -38,9 +38,9 @@ MORE_REPOS: str = getenv("MORE_REPOS")  # or enter: '[owner/repo],...,[owner/rep
 ONLY_INCLUDED_REPOS: str = getenv(
     "ONLY_INCLUDED_REPOS"
 )  # or enter: '[owner/repo],...,[owner/repo]'
-ONLY_INCLUDED_OWNERS: str = (
-    "University-Project-Repos"  # getenv("ONLY_INCLUDED_OWNERS") # or enter: [owner],...,[owner]
-)
+ONLY_INCLUDED_OWNERS: str = getenv(
+    "ONLY_INCLUDED_OWNERS"
+)  # or enter: [owner],...,[owner]
 ONLY_INCLUDED_COLLAB_REPOS: str = getenv(
     "ONLY_INCLUDED_COLLAB_REPOS"
 )  # or enter: [owner/repo],...,[owner/repo]

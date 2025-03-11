@@ -248,7 +248,7 @@ class GenerateImages:
         lang_count: str = str(len(sorted_languages))
         num_excluded_languages: int = len(await self.__stats.excluded_languages)
         if num_excluded_languages > 0:
-            lang_count += " [+" + str(num_excluded_languages) + "]"
+            lang_count += " [+" + str(num_excluded_languages) + " hidden]"
 
         delay_between: int = 150
 
