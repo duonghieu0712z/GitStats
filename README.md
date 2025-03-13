@@ -1,6 +1,6 @@
 # 📈 [GitHub Stats Visualization](https://github.com/R055A/GitStats) 🔭
 
-[![Generate Git Stats Images](https://github.com/R055A/GitStats/actions/workflows/non_auto_generate_stat_images.yml/badge.svg)](https://github.com/R055A/GitStats/actions/workflows/non_auto_generate_stat_images.yml) [![Auto Update Stats Images](https://github.com/R055A/GitStats/actions/workflows/auto_update_stat_images.yml/badge.svg)](https://github.com/R055A/GitStats/actions/workflows/auto_update_stat_images.yml)
+[![Generate Git Stats Images](https://github.com/R055A/GitStats/actions/workflows/non_auto_generate_stat_images.yml/badge.svg)](https://github.com/R055A/GitStats) [![Auto Update Stats Images](https://github.com/R055A/GitStats/actions/workflows/auto_update_stat_images.yml/badge.svg)](https://github.com/R055A/GitStats)
 
 Generate regularly updated visualizations of personalized GitHub statistics. Filter by owner/organisation, repository, type, language, and more. Secure and private [GraphQL](https://docs.github.com/en/graphql) and [REST](https://docs.github.com/en/rest) API-fetching using [Actions](https://docs.github.com/en/actions) and [Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets). Create a template [(top-right green button)](https://github.com/new?template_name=GitStats&template_owner=R055A) and follow instructions below for authorizing API-fetched user statistics.
 
