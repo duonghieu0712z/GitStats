@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from time import sleep
+from asyncio import Lock
 from typing import Optional, cast
 from aiohttp import ClientSession
 from datetime import date, timedelta
@@ -22,6 +24,7 @@ class GitHubRepoStats(object):
         "dependabot[bot]"
     ]  # exclude bot data from being included in statistical calculations
     _NO_NAME: str = "Unknown"
+    _UNLOCK_WAIT_SECONDS = 2
 
     def __init__(
         self, environment_vars: EnvironmentVariables, session: ClientSession
@@ -32,6 +35,9 @@ class GitHubRepoStats(object):
             access_token=self.environment_vars.access_token,
             session=session,
         )
+
+        self.__get_stats_lock: Lock = Lock()
+        self.__is_stats_fetched: bool = False
 
         self._name: Optional[str] = None
         self._stargazers: Optional[int] = None
@@ -142,107 +148,119 @@ class GitHubRepoStats(object):
         """
         Get lots of summary stats using one big query. Sets many attributes
         """
-        self._stargazers: int = 0
-        self._forks: int = 0
-        self._excluded_languages: set[str] = set()
-        self._exclude_repo_languages: set[str] = set()
-        self._languages: dict[str, dict[str, float | str]] = dict()
-        self._repos: set[str] = set()
-        self._empty_repos: set[str] = set()
+        if self.__is_stats_fetched:
+            return
 
-        next_owned: str | None = None
-        next_contrib: str | None = None
+        async with self.__get_stats_lock:
+            if self.__is_stats_fetched:
+                return
 
-        user_raw_result: dict[str, dict] = await self.queries.query(
-            generated_query=GitHubApiQueries.get_user()
-        )
-        user_raw_result = user_raw_result if user_raw_result else {}
-        if (
-            user_raw_result.get("data", {}) is not None
-            and user_raw_result.get("data", {}).get("viewer", {}) is not None
-            and (
-                user_raw_result.get("data", {}).get("viewer", {}).get("name", None)
-                is not None
-                or user_raw_result.get("data", {}).get("viewer", {}).get("user", None)
-                is not None
-            )
-        ):
-            self._name = (
-                user_raw_result.get("data", {})
-                .get("viewer", {})
-                .get("name", self._NO_NAME)
-            )
-        elif user_raw_result.get("message", "").lower() == "bad credentials":
-            raise ConnectionRefusedError("Unauthorized Error: Invalid Access Token")
-        else:
-            raise Exception(f"Error: {user_raw_result.get('message', '')}")
+            self._stargazers: int = 0
+            self._forks: int = 0
+            self._excluded_languages: set[str] = set()
+            self._exclude_repo_languages: set[str] = set()
+            self._languages: dict[str, dict[str, float | str]] = dict()
+            self._repos: set[str] = set()
+            self._empty_repos: set[str] = set()
 
-        while True:
-            repo_overview_raw_results: dict[str, dict] = await self.queries.query(
-                generated_query=GitHubApiQueries.repos_overview(
-                    owned_cursor=next_owned, contrib_cursor=next_contrib
-                )
-            )
-            repo_overview_raw_results = (
-                repo_overview_raw_results if repo_overview_raw_results else {}
-            )
+            next_owned: str | None = None
+            next_contrib: str | None = None
 
+            user_raw_result: dict[str, dict] = await self.queries.query(
+                generated_query=GitHubApiQueries.get_user()
+            )
+            user_raw_result = user_raw_result if user_raw_result else {}
             if (
-                repo_overview_raw_results.get("data", {}) is not None
-                and repo_overview_raw_results.get("data", {}).get("viewer", {})
-                is not None
-            ):
-                owned_repos: dict[str, dict | list[dict]] = (
-                    repo_overview_raw_results.get("data", {})
+                user_raw_result.get("data", {}) is not None
+                and user_raw_result.get("data", {}).get("viewer", {}) is not None
+                and (
+                    user_raw_result.get("data", {}).get("viewer", {}).get("name", None)
+                    is not None
+                    or user_raw_result.get("data", {})
                     .get("viewer", {})
-                    .get("repositories", {})
+                    .get("user", None)
+                    is not None
                 )
-                repos: list[dict] = owned_repos.get("nodes", [])
-                contrib_repos: dict[str, dict | list] = (
-                    repo_overview_raw_results.get("data", {})
-                    .get("viewer", {})
-                    .get("repositoriesContributedTo", {})
-                )
-            else:
-                owned_repos = {}
-                repos = []
-                contrib_repos = {}
-
-            if not self.environment_vars.is_exclude_contrib_repos:
-                repos += contrib_repos.get("nodes", [])
-
-            await self.repo_stats(repos=repos)
-
-            is_cur_owned: bool = owned_repos.get("pageInfo", {}).get(
-                "hasNextPage", False
-            )
-            is_cur_contrib: bool = contrib_repos.get("pageInfo", {}).get(
-                "hasNextPage", False
-            )
-
-            if is_cur_owned or is_cur_contrib:
-                next_owned = owned_repos.get("pageInfo", {}).get(
-                    "endCursor", next_owned
-                )
-                next_contrib = contrib_repos.get("pageInfo", {}).get(
-                    "endCursor", next_contrib
-                )
-            else:
-                break
-
-        await self.manually_added_repo_stats()
-
-        for lang_name in self._exclude_repo_languages:
-            if (
-                lang_name not in self._languages.keys()
-                and lang_name not in self._excluded_languages
             ):
-                self._excluded_languages.add(lang_name)
+                self._name = (
+                    user_raw_result.get("data", {})
+                    .get("viewer", {})
+                    .get("name", self._NO_NAME)
+                )
+            elif user_raw_result.get("message", "").lower() == "bad credentials":
+                raise ConnectionRefusedError("Unauthorized Error: Invalid Access Token")
+            else:
+                raise Exception(f"Error: {user_raw_result.get('message', '')}")
 
-        # TODO: Improve languages to scale by number of contributions to specific filetypes
-        langs_total: int = sum([v.get("size", 0) for v in self._languages.values()])
-        for k, v in self._languages.items():
-            v["prop"]: float = 100 * (v.get("size", 0) / langs_total)
+            while True:
+                repo_overview_raw_results: dict[str, dict] = await self.queries.query(
+                    generated_query=GitHubApiQueries.repos_overview(
+                        owned_cursor=next_owned, contrib_cursor=next_contrib
+                    )
+                )
+                repo_overview_raw_results = (
+                    repo_overview_raw_results if repo_overview_raw_results else {}
+                )
+
+                if (
+                    repo_overview_raw_results.get("data", {}) is not None
+                    and repo_overview_raw_results.get("data", {}).get("viewer", {})
+                    is not None
+                ):
+                    owned_repos: dict[str, dict | list[dict]] = (
+                        repo_overview_raw_results.get("data", {})
+                        .get("viewer", {})
+                        .get("repositories", {})
+                    )
+                    repos: list[dict] = owned_repos.get("nodes", [])
+                    contrib_repos: dict[str, dict | list] = (
+                        repo_overview_raw_results.get("data", {})
+                        .get("viewer", {})
+                        .get("repositoriesContributedTo", {})
+                    )
+                else:
+                    owned_repos = {}
+                    repos = []
+                    contrib_repos = {}
+
+                if not self.environment_vars.is_exclude_contrib_repos:
+                    repos += contrib_repos.get("nodes", [])
+
+                await self.repo_stats(repos=repos)
+
+                is_cur_owned: bool = owned_repos.get("pageInfo", {}).get(
+                    "hasNextPage", False
+                )
+                is_cur_contrib: bool = contrib_repos.get("pageInfo", {}).get(
+                    "hasNextPage", False
+                )
+
+                if is_cur_owned or is_cur_contrib:
+                    next_owned = owned_repos.get("pageInfo", {}).get(
+                        "endCursor", next_owned
+                    )
+                    next_contrib = contrib_repos.get("pageInfo", {}).get(
+                        "endCursor", next_contrib
+                    )
+                else:
+                    break
+
+            await self.manually_added_repo_stats()
+
+            for lang_name in self._exclude_repo_languages:
+                if (
+                    lang_name not in self._languages.keys()
+                    and lang_name not in self._excluded_languages
+                ):
+                    self._excluded_languages.add(lang_name)
+
+            # TODO: Improve languages to scale by number of contributions to specific filetypes
+            langs_total: int = sum([v.get("size", 0) for v in self._languages.values()])
+            for k, v in self._languages.items():
+                v["prop"]: float = 100 * (v.get("size", 0) / langs_total)
+
+            sleep(self._UNLOCK_WAIT_SECONDS)
+            self.__is_stats_fetched = True
 
     def __exclude_repo_langs(
         self,
@@ -310,7 +328,9 @@ class GitHubRepoStats(object):
         """
         lang_cols: dict[str, dict[str, str]] = self.queries.get_language_colors()
 
-        for repo_name in self.environment_vars.manually_added_repos:
+        for repo_name in self.environment_vars.manually_added_repos.union(
+            self.environment_vars.more_collab_repos
+        ).union(self.environment_vars.only_included_collab_repos):
             if await self.is_repo_name_invalid(repo_name=repo_name):
                 continue
             self._repos.add(repo_name)
@@ -452,7 +472,7 @@ class GitHubRepoStats(object):
     @property
     async def contributed_collab_repos(self) -> set[str]:
         """
-        :return: list of names of repos contributed to user in collaborations with at least one other
+        :return: list of names of repos contributed to by user in collaborations with at least one other
         """
         if self._contributed_collab_repos is not None:
             return self._contributed_collab_repos

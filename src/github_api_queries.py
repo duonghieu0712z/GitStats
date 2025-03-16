@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from aiohttp.client_exceptions import ClientPayloadError
 from requests import post, get, models
 from asyncio import Semaphore, sleep
 from aiohttp import ClientSession
@@ -21,8 +22,8 @@ class GitHubApiQueries(object):
 
     __GITHUB_API_URL: str = "https://api.github.com/"
     __GRAPHQL_PATH: str = "graphql"
-    __REST_QUERY_LIMIT: int = 60
-    __ASYNCIO_SLEEP_TIME: int = 2
+    __REST_QUERY_LIMIT: int = 10
+    __ASYNCIO_SLEEP_TIME: int = 5
     __DEFAULT_MAX_CONNECTIONS: int = 10
 
     def __init__(
@@ -58,8 +59,8 @@ class GitHubApiQueries(object):
 
             if result is not None:
                 return result
-        except ConnectionError:
-            print("aiohttp failed for GraphQL query")
+        except (ConnectionError, ClientPayloadError) as err:
+            print("aiohttp failed for GraphQL query. Msg:", str(err))
 
             # Fall back on non-async requests
             async with self.semaphore:
@@ -106,8 +107,12 @@ class GitHubApiQueries(object):
 
                 if result is not None:
                     return result
-            except ConnectionError:
-                print("aiohttp failed for REST query attempt #" + str(i + 1))
+            except (ConnectionError, ClientPayloadError) as err:
+                print(
+                    "aiohttp failed for REST query attempt #" + str(i + 1),
+                    " msg:",
+                    str(err),
+                )
 
                 # Fall back on non-async requests
                 async with self.semaphore:
